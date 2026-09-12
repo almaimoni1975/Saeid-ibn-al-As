@@ -67,18 +67,34 @@
 <body>
   <img class="logo" src="https://raw.githubusercontent.com/almaimoni1975/rased-icon/main/icon_512.png" alt="راصد">
   <h1>راصد</h1>
-  <p>جارٍ التحويل إلى التطبيق...</p>
-  <div class="spinner"></div>
-  <a class="fallback" id="fallbackLink" href="#">إن لم يتم التحويل تلقائياً، اضغط هنا</a>
+  <p id="statusText">جارٍ التحقق...</p>
+  <div class="spinner" id="spinnerEl"></div>
+  <button id="openAppBtn" style="display:none;background:linear-gradient(135deg,#4f6df5,#7c5cff);color:#fff;border:none;padding:14px 28px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(79,109,245,0.35);">🚀 فتح راصد</button>
+  <a class="fallback" id="fallbackLink" href="#" style="display:none;">أو اضغط هنا</a>
 
   <script>
     // ضع هنا رابط تطبيق راصد الفعلي على Google Apps Script (رابط /exec الكامل)
-    var RASED_APP_URL = "https://script.google.com/macros/s/AKfycbz_IiBoWsnycLk5hnfXVkyD6pO3JuSAC5QswSiwYrecLNkV1J21RKzT4MeQ8f5yqRP2/exec";
+    var RASED_APP_URL = "ضع_رابط_تطبيقك_هنا";
 
     document.getElementById('fallbackLink').href = RASED_APP_URL;
 
-    // تحويل تلقائي فوري
-    window.top.location.href = RASED_APP_URL;
+    // نتحقق: هل الصفحة فُتحت من الأيقونة على الشاشة الرئيسية (استخدام فعلي كتطبيق)،
+    // أم فُتحت كصفحة عادية في المتصفح (مثل حالة إضافتها للشاشة الرئيسية أول مرة)؟
+    var isStandalone = window.navigator.standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches;
+
+    if (isStandalone) {
+      // استخدام فعلي من الأيقونة: تحويل فوري وسريع كالمعتاد
+      window.top.location.href = RASED_APP_URL;
+    } else {
+      // تصفح عادي (على الأرجح لإضافتها للشاشة الرئيسية): لا تحويل تلقائي، امنح المستخدم وقته كاملاً
+      document.getElementById('spinnerEl').style.display = 'none';
+      document.getElementById('statusText').innerText = 'يمكنك الآن إضافة هذه الصفحة للشاشة الرئيسية بهدوء، أو الضغط أدناه للدخول مباشرة.';
+      var btn = document.getElementById('openAppBtn');
+      btn.style.display = 'inline-block';
+      btn.onclick = function () { window.top.location.href = RASED_APP_URL; };
+      document.getElementById('fallbackLink').style.display = 'inline-block';
+    }
   </script>
 </body>
 </html>
